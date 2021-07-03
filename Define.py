@@ -1,0 +1,3 @@
+
+class COMMAND_ID:
+    COMMAND_ID_INIT_WORKER = 1
