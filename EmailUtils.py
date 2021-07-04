@@ -5,6 +5,7 @@ from nlutils.Utils.Log import default_logger
 
 from Configure import AIWConfigure
 
+__all__ = ['default_email_manager']
 
 
 class EmailManager(object):
@@ -46,6 +47,8 @@ class EmailManager(object):
 
     def __del__(self):
         self.proxy.close()
+
+default_email_manager = EmailManager()
 
 if __name__ == '__main__':
     man = EmailManager()

@@ -5,7 +5,7 @@ import json
 from nlutils.Utils.Log import default_logger
 from Configure import AIWConfigure
 from Define import COMMAND_ID
-from requestHandler import REQUEST_DISPATCHER
+from RequestHandler import REQUEST_DISPATCHER
 
 class AIWorkerSocketStore(object):
 
