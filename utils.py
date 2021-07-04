@@ -48,5 +48,6 @@ if __name__ == '__main__':
         "assigned_gpu_id": 1,
         "assigned_server": "local",
         "launch_script": "train.sh",
+        "email": "mliu444@gatech.edu"
     }
     launch_task(task_info)
