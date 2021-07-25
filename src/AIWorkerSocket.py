@@ -3,21 +3,18 @@ import time
 import json
 
 from nlutils.Utils.Log import default_logger
+from nlutils.Utils.SocketStore import SocketSenderProxy
 from nlutils.Defines import *
 from Configure import AIWConfigure
 from WorkerOperation import OPERATION_DISPATCHER
 
 class AIWorkerSocketStore(object):
 
-    def __init__(self, host=None, port=None):
+    def __init__(self):
         # self.socket.setblocking(0)
-        self.alias = AIWConfigure.get_instance().get_config_info("ServerAlias")
-        if host is None or port is None:
-            self.host = AIWConfigure.get_instance().get_config_info('AiWorkerHost').as_string()
-            self.port = AIWConfigure.get_instance().get_config_info('AiWorkerPort').as_int()
-        else:
-            self.host = host
-            self.port = port
+        self.alias = AIWConfigure.get_instance().get_config_info("ServerAlias").as_string()
+        self.host = AIWConfigure.get_instance().get_config_info('AiWorkerHost').as_string()
+        self.port = AIWConfigure.get_instance().get_config_info('AiWorkerPort').as_int()
         self.socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     
     def create_pkg(self, msg_dict):
@@ -29,9 +26,15 @@ class AIWorkerSocketStore(object):
         return pkg.__str__().replace("'", '"').encode("utf-8")
                 
     def handle(self, data):
-        received_data = data.decode("utf-8")
+        received_data = data
         received_obj = json.loads(received_data)
-        response = OPERATION_DISPATCHER[received_obj.get("operation_id")].handle(received_obj)
+        try:
+            response = OPERATION_DISPATCHER[received_obj.get("operation_id")].run(received_obj)
+            response['server_host'] = received_obj['server_host']
+            response['server_port'] = received_obj['server_port']
+        except Exception:
+            default_logger.error(f"Unable to run operation {received_obj.get('operation_id')}")
+            return None
         return response
     
     def bind(self):
@@ -42,7 +45,11 @@ class AIWorkerSocketStore(object):
 
     def handle_socket(self, sock, address):
         data = sock.recv(1024).decode()
-        self.handle(data)
+        response = self.handle(data)
+        if response is not None:
+            response = self.create_pkg(response)
+            SocketSenderProxy().send(response['server_host'], response['server_port'], response)
+            
     
     def run(self):
         default_logger.warn(f"Waiting for connection...")

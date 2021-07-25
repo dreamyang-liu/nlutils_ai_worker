@@ -14,8 +14,10 @@ class Operation(ABC):
 class InitWorkerOperation(Operation):
 
     def run(self, msg=None):
+        default_logger.warn('IN OPERATION InitWorker')
         msg = dict()
         msg['command_id'] = COMMAND_ID.COMMAND_ID_WORKER_INITED
+        default_logger.warn('OUT OPERATION InitWorker')
         return msg
 
 class GPUSummaryOperation(Operation):

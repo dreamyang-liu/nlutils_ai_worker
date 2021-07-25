@@ -1,6 +1,6 @@
 from AIWorkerSocket import AIWorkerSocketStore
 
 
-worker = AIWorkerSocketStore('127.0.0.1', 22105)
+worker = AIWorkerSocketStore()
 worker.bind()
 worker.run()
