@@ -29,11 +29,14 @@ def launch_task(task_info):
         local_repo_path = f'{local_repo_root_path}/{task_repo_name}'
         local_repo_path = os.path.abspath(local_repo_path)
         if os.path.isdir(local_repo_path):
-            default_logger.warn('Repo already exists in local folder.')
+            default_logger.warn('Repo already exists in local folder !')
             if AIWConfigure.get_instance().get_config_info("ForceUpdate").as_bool():
                 default_logger.warn('Force updating local repo.')
                 os.system(f'rm -rf {local_repo_path}')
                 os.system(f"git clone {task_repo_url} {local_repo_path}")
+            else:
+                default_logger.info('Updating local repo using git pull..')
+                os.system(f'cd {local_repo_path} && git pull')
         else:
             default_logger.info('Cloning repo to local folder...')
             os.system(f"git clone {task_repo_url} {local_repo_path}")
@@ -53,7 +56,8 @@ if __name__ == '__main__':
         "repo_url": "https://github.com/leonard-thong/SciAnnotate.git",
         "timestamp": time.time(),
         "args": "",
-        "estimate_memory": 8000,
+        "estimate_cpu_memory": 8000,
+        "estimate_gpu_memory": 8000,
         "assigned_gpu_id": 1,
         "assigned_server": "local",
         "launch_script": "train.sh",

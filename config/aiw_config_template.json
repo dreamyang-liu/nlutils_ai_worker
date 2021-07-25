@@ -3,5 +3,7 @@
     "ForceUpdate": true,
     "ServerAlias": "bucks",
     "QQCrediential": "",
-    "ServerEmailAddress": ""
+    "ServerEmailAddress": "",
+    "AiWorkerHost": "0.0.0.0",
+    "AiWorkerPort": 20045
 }
